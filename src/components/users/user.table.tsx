@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
-import { Table, Tag } from "antd";
+import { Button, Modal, Table, Tag } from "antd";
 import type { TableProps } from "antd";
 import type { ColumnsType } from "antd/es/table";
+import { Header } from "antd/es/layout/layout";
+import { PlusOutlined } from "@ant-design/icons";
+import Input from "antd/es/input/Input";
 
 interface IUsers {
   _id: string;
@@ -12,6 +15,29 @@ interface IUsers {
 
 const UsersTable = () => {
   const [listUsers, setListUsers] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [age, setAge] = useState("");
+  const [gender, setGender] = useState("");
+  const [address, setAddress] = useState("");
+  const [role, setRole] = useState("");
+
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleOk = () => {
+    setIsModalOpen(false);
+    const data = { name, email, password, age, gender, address, role };
+    console.log("data", data);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
 
   useEffect(() => {
     getData();
@@ -49,8 +75,75 @@ const UsersTable = () => {
 
   return (
     <>
-      <h2>Table</h2>
+      <Header
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <h2 style={{ color: "#c94087" }}>Table</h2>
+        <Button type="primary" icon={<PlusOutlined />} onClick={showModal}>
+          Add new user
+        </Button>
+      </Header>
+
       <Table columns={columns} dataSource={listUsers} />
+
+      <Modal
+        title="Basic Modal"
+        open={isModalOpen}
+        onOk={handleOk}
+        onCancel={handleCancel}
+        maskClosable={false}
+      >
+        <div>
+          <label> Name:</label>
+          <Input
+            value={name}
+            onChange={(event) => setName(event.target.value)}
+          />
+        </div>
+        <div>
+          <label>Email:</label>
+          <Input
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
+          />
+        </div>
+        <div>
+          <label>Password:</label>
+          <Input
+            value={password}
+            onChange={(event) => setPassword(event.target.value)}
+          />
+        </div>
+        <div>
+          <label>Age:</label>
+          <Input value={age} onChange={(event) => setAge(event.target.value)} />
+        </div>
+        <div>
+          <label>Gender:</label>
+          <Input
+            value={gender}
+            onChange={(event) => setGender(event.target.value)}
+          />
+        </div>
+        <div>
+          <label>Address:</label>
+          <Input
+            value={address}
+            onChange={(event) => setAddress(event.target.value)}
+          />
+        </div>
+        <div>
+          <label>Role:</label>
+          <Input
+            value={role}
+            onChange={(event) => setRole(event.target.value)}
+          />
+        </div>
+      </Modal>
     </>
   );
 };
