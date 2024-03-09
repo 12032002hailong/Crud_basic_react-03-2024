@@ -20,7 +20,6 @@ const UpdateUserModal = (props: IProps) => {
     dataUpdate,
     setDataUpdate,
   } = props;
-  console.log("dataUpdate", dataUpdate);
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -42,29 +41,38 @@ const UpdateUserModal = (props: IProps) => {
   }, [dataUpdate]);
 
   const handleOk = async () => {
-    setIsUpdateModalOpen(false);
-    const data = { name, email, password, age, gender, address, role };
-    const res = await fetch("http://localhost:8000/api/v1/users", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${access_token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ ...data }),
-    });
+    if (dataUpdate) {
+      const data = {
+        _id: dataUpdate._id,
+        name,
+        email,
+        age,
+        gender,
+        role,
+        address,
+      };
+      const res = await fetch("http://localhost:8000/api/v1/users", {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ ...data }),
+      });
 
-    const d = await res.json();
-    if (d.data) {
-      await getData();
-      notification.success({
-        message: "Tao moi nguoi dung thanh cong",
-      });
-      setIsUpdateModalOpen(false);
-    } else {
-      notification.error({
-        message: "Co loi xay ra",
-        description: JSON.stringify(d.message),
-      });
+      const d = await res.json();
+      if (d.data) {
+        await getData();
+        notification.success({
+          message: "Cập nhật người dùng thanh cong",
+        });
+        handleCloseCreateModal();
+      } else {
+        notification.error({
+          message: "Co loi xay ra",
+          description: JSON.stringify(d.message),
+        });
+      }
     }
   };
 
@@ -102,6 +110,7 @@ const UpdateUserModal = (props: IProps) => {
       <div>
         <label>Password:</label>
         <Input
+          disabled
           value={password}
           onChange={(event) => setPassword(event.target.value)}
         />

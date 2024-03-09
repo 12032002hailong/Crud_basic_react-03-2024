@@ -1,6 +1,13 @@
 import { useEffect, useState } from "react";
-import { Button, Modal, Table, Tag, notification } from "antd";
-import type { TableProps } from "antd";
+import {
+  Button,
+  Modal,
+  Popconfirm,
+  Table,
+  Tag,
+  message,
+  notification,
+} from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { Header } from "antd/es/layout/layout";
 import { PlusOutlined } from "@ant-design/icons";
@@ -41,7 +48,16 @@ const UsersTable = () => {
     });
 
     const data1 = await res.json();
+    if (!data1.data) {
+      notification.error({
+        message: JSON.stringify(data1.message),
+      });
+    }
     setListUsers(data1.data.result);
+  };
+
+  const confirm = () => {
+    message.success("Click on Yes");
   };
 
   const columns: ColumnsType<IUsers> = [
@@ -62,15 +78,25 @@ const UsersTable = () => {
       render: (value, record) => {
         return (
           <div>
-            <button
+            <Button
               onClick={() => {
                 setDataUpdate(record);
-                console.log("check record: ", record);
                 setIsUpdateModalOpen(true);
               }}
             >
               Edit
-            </button>
+            </Button>
+            <Popconfirm
+              title="Delete the task"
+              description={`Are you sure to delete user name = ${record.name}`}
+              onConfirm={confirm}
+              okText="Yes"
+              cancelText="No"
+            >
+              <Button danger style={{ marginLeft: 20 }}>
+                Delete
+              </Button>
+            </Popconfirm>
           </div>
         );
       },
