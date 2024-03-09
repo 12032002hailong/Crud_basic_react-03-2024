@@ -56,8 +56,26 @@ const UsersTable = () => {
     setListUsers(data1.data.result);
   };
 
-  const confirm = () => {
-    message.success("Click on Yes");
+  const confirm = async (user: IUsers) => {
+    const res = await fetch(`http://localhost:8000/api/v1/users/${user._id}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${access_token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    const d = await res.json();
+    if (d.data) {
+      notification.success({
+        message: "Xoa User thanh cong",
+      });
+    } else {
+      notification.error({
+        message: JSON.stringify(d.message),
+      });
+    }
+    await getData();
   };
 
   const columns: ColumnsType<IUsers> = [
@@ -89,7 +107,7 @@ const UsersTable = () => {
             <Popconfirm
               title="Delete the task"
               description={`Are you sure to delete user name = ${record.name}`}
-              onConfirm={confirm}
+              onConfirm={() => confirm(record)}
               okText="Yes"
               cancelText="No"
             >
