@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
 import "./index.scss";
@@ -50,6 +50,26 @@ const Header: React.FC = () => {
 };
 
 const AdminLayout = () => {
+  const getData = async () => {
+    const res = await fetch("http://localhost:8000/api/v1/auth/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        username: "hoidanit@gmail.com",
+        password: "123456",
+      }),
+    });
+
+    const data1 = await res.json();
+    if (data1.data) {
+      localStorage.setItem("access_token", data1.data.access_token);
+    }
+  };
+  useEffect(() => {
+    getData();
+  }, []);
   return (
     <div>
       <Header />
