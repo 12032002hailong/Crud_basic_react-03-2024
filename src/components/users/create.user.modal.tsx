@@ -38,8 +38,9 @@ const CreateUserModal = (props: IProps) => {
       notification.success({
         message: "Tao moi nguoi dung thanh cong",
       });
-      setIsCreateModalOpen(false);
+      handleCloseCreateModal();
     } else {
+      setIsCreateModalOpen(true);
       notification.error({
         message: "Co loi xay ra",
         description: JSON.stringify(d.message),
