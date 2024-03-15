@@ -45,28 +45,28 @@ const UsersTable = () => {
   }, []);
 
   const getData = async () => {
-    // const res = await fetch(
-    //   `http://localhost:8000/api/v1/users?current=${meta.current}&pageSize=${meta.pageSize}`,
-    //   {
-    //     headers: {
-    //       Authorization: `Bearer ${access_token}`,
-    //       "Content-Type": "application/json",
-    //     },
-    //   }
-    // );
-    // const data1 = await res.json();
-    // if (!data1.data) {
-    //   notification.error({
-    //     message: JSON.stringify(data1.message),
-    //   });
-    // }
-    // setListUsers(data1.data.result);
-    // setMeta({
-    //   current: data1.data.meta.current,
-    //   pageSize: data1.data.meta.pageSize,
-    //   pages: data1.data.meta.pages,
-    //   total: data1.data.meta.total,
-    // });
+    const res = await fetch(
+      `http://localhost:8000/api/v1/users?current=${meta.current}&pageSize=${meta.pageSize}`,
+      {
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const data1 = await res.json();
+    if (!data1.data) {
+      notification.error({
+        message: JSON.stringify(data1.message),
+      });
+    }
+    setListUsers(data1.data.result);
+    setMeta({
+      current: data1.data.meta.current,
+      pageSize: data1.data.meta.pageSize,
+      pages: data1.data.meta.pages,
+      total: data1.data.meta.total,
+    });
   };
 
   const confirm = async (user: IUsers) => {
