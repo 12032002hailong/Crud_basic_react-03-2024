@@ -1,7 +1,8 @@
-import { Input, Modal, notification } from "antd";
+import { Form, Input, InputNumber, Modal, Select, notification } from "antd";
 import React, { useEffect, useState } from "react";
 import { IUsers } from "./user.table";
 
+const { Option } = Select;
 interface IProps {
   access_token: string;
   getData: any;
@@ -21,26 +22,31 @@ const UpdateUserModal = (props: IProps) => {
     setDataUpdate,
   } = props;
 
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [age, setAge] = useState("");
-  const [gender, setGender] = useState("");
-  const [address, setAddress] = useState("");
-  const [role, setRole] = useState("");
+  const [form] = Form.useForm();
+
   useEffect(() => {
     if (dataUpdate) {
-      setName(dataUpdate.name);
-      setEmail(dataUpdate.email);
-      setPassword(dataUpdate.password);
-      setAge(dataUpdate.age);
-      setGender(dataUpdate.gender);
-      setAddress(dataUpdate.address);
-      setRole(dataUpdate.role);
+      form.setFieldsValue({
+        name: dataUpdate.name,
+        email: dataUpdate.email,
+        age: dataUpdate.age,
+        address: dataUpdate.address,
+        role: dataUpdate.role,
+        gender: dataUpdate.gender,
+      });
     }
   }, [dataUpdate]);
 
-  const handleOk = async () => {
+  const handleOk = async () => {};
+
+  const handleCloseCreateModal = () => {
+    setIsUpdateModalOpen(false);
+    form.resetFields();
+    setDataUpdate(null);
+  };
+
+  const onFinish = async (values: any) => {
+    const { name, email, age, gender, role, address } = values;
     if (dataUpdate) {
       const data = {
         _id: dataUpdate._id,
@@ -76,68 +82,151 @@ const UpdateUserModal = (props: IProps) => {
     }
   };
 
-  const handleCloseCreateModal = () => {
-    setIsUpdateModalOpen(false);
-    setDataUpdate(null);
-    setName("");
-    setEmail("");
-    setPassword("");
-    setAge("");
-    setGender("");
-    setAddress("");
-    setRole("");
-  };
-
   return (
     <Modal
       title="Basic Modal"
       open={isUpdateModalOpen}
-      onOk={handleOk}
+      onOk={() => form.submit()}
       onCancel={() => handleCloseCreateModal()}
       maskClosable={false}
     >
-      <div>
-        <label> Name:</label>
-        <Input value={name} onChange={(event) => setName(event.target.value)} />
-      </div>
-      <div>
-        <label>Email:</label>
-        <Input
-          value={email}
-          onChange={(event) => setEmail(event.target.value)}
-        />
-      </div>
-      <div>
-        <label>Password:</label>
-        <Input
-          disabled
-          value={password}
-          onChange={(event) => setPassword(event.target.value)}
-        />
-      </div>
-      <div>
-        <label>Age:</label>
-        <Input value={age} onChange={(event) => setAge(event.target.value)} />
-      </div>
-      <div>
-        <label>Gender:</label>
-        <Input
-          value={gender}
-          onChange={(event) => setGender(event.target.value)}
-        />
-      </div>
-      <div>
-        <label>Address:</label>
-        <Input
-          value={address}
-          onChange={(event) => setAddress(event.target.value)}
-        />
-      </div>
-      <div>
-        <label>Role:</label>
-        <Input value={role} onChange={(event) => setRole(event.target.value)} />
-      </div>
+      <Form
+        name="basic"
+        initialValues={{ remember: true }}
+        onFinish={onFinish}
+        autoComplete="off"
+        layout="vertical"
+        form={form}
+      >
+        <Form.Item
+          style={{ marginBottom: 5 }}
+          label="Name"
+          name="name"
+          rules={[{ required: true, message: "Please input your name!" }]}
+        >
+          <Input />
+        </Form.Item>
+
+        <Form.Item
+          style={{ marginBottom: 5 }}
+          label="Email"
+          name="email"
+          rules={[{ required: true, message: "Please input your email!" }]}
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item
+          style={{ marginBottom: 5 }}
+          label="Password"
+          name="password"
+          rules={[
+            {
+              required: dataUpdate ? false : true,
+              message: "Please input your password!",
+            },
+          ]}
+        >
+          <Input.Password disabled={dataUpdate ? true : false} />
+        </Form.Item>
+        <Form.Item
+          style={{ marginBottom: 5 }}
+          label="Age"
+          name="age"
+          rules={[{ required: true, message: "Please input your age!" }]}
+        >
+          <InputNumber style={{ width: "100%" }} />
+        </Form.Item>
+        <Form.Item
+          style={{ marginBottom: 5 }}
+          label="Address"
+          name="address"
+          rules={[{ required: true, message: "Please input your address!" }]}
+        >
+          <Input />
+        </Form.Item>
+
+        <Form.Item
+          label="Gender"
+          name="gender"
+          rules={[{ required: true }]}
+          style={{ marginBottom: 5 }}
+        >
+          <Select
+            placeholder="Select a option and change input text above"
+            allowClear
+          >
+            <Option value="MALE">male</Option>
+            <Option value="FEMALE">female</Option>
+            <Option value="OTHER">other</Option>
+          </Select>
+        </Form.Item>
+
+        <Form.Item
+          label="Role"
+          name="role"
+          rules={[{ required: true }]}
+          style={{ marginBottom: 5 }}
+        >
+          <Select
+            placeholder="Select a option and change input text above"
+            allowClear
+          >
+            <Option value="USER">User</Option>
+            <Option value="ADMIN">Admin</Option>
+          </Select>
+        </Form.Item>
+      </Form>
     </Modal>
+
+    // <Modal
+    //   title="Basic Modal"
+    //   open={isUpdateModalOpen}
+    //   onOk={handleOk}
+    //   onCancel={() => handleCloseCreateModal()}
+    //   maskClosable={false}
+    // >
+    //   <div>
+    //     <label> Name:</label>
+    //     <Input value={name} onChange={(event) => setName(event.target.value)} />
+    //   </div>
+    //   <div>
+    //     <label>Email:</label>
+    //     <Input
+    //       value={email}
+    //       onChange={(event) => setEmail(event.target.value)}
+    //     />
+    //   </div>
+    //   <div>
+    //     <label>Password:</label>
+    //     <Input
+    //       disabled
+    //       value={password}
+    //       onChange={(event) => setPassword(event.target.value)}
+    //     />
+    //   </div>
+    //   <div>
+    //     <label>Age:</label>
+    //     <Input value={age} onChange={(event) => setAge(event.target.value)} />
+    //   </div>
+    //   <div>
+    //     <label>Gender:</label>
+    //     <Input
+    //       value={gender}
+    //       onChange={(event) => setGender(event.target.value)}
+    //     />
+    //   </div>
+    //   <div>
+    //     <label>Address:</label>
+    //     <Input
+    //       value={address}
+    //       onChange={(event) => setAddress(event.target.value)}
+    //     />
+    //   </div>
+    //   <div>
+    //     <label>Role:</label>
+    //     <Input value={role} onChange={(event) => setRole(event.target.value)} />
+    //   </div>
+    // </Modal>
   );
 };
 
